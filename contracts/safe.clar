@@ -159,3 +159,25 @@
         ERR-IDENTITY-NOT-FOUND
     )
 ))
+
+;; Read-only functions
+(define-read-only (get-identity-record (target-identity principal))
+    (map-get? identity-registry target-identity)
+)
+
+(define-read-only (check-access-status (vault-owner principal) (accessor principal))
+    (some (verify-access-authorization vault-owner accessor))
+)
+
+(define-read-only (get-access-details (vault-owner principal) (accessor principal))
+    (map-get? vault-access-ledger { vault-owner: vault-owner, accessor: accessor })
+)
+
+;; Initialize contract
+(begin
+    (map-set data-sensitivity-tiers u1 { tier-label: "Public-Profile", required-clearance: u1 })
+    (map-set data-sensitivity-tiers u2 { tier-label: "Contact-Information", required-clearance: u2 })
+    (map-set data-sensitivity-tiers u3 { tier-label: "Protected-Data", required-clearance: u3 })
+    (map-set data-sensitivity-tiers u4 { tier-label: "Payment-Information", required-clearance: u4 })
+    (map-set data-sensitivity-tiers u5 { tier-label: "Health-Records", required-clearance: u5 })
+)
